@@ -15,7 +15,7 @@ def face_landmark_facemesh(img, frame_count, video_name):
     results = facemesh.run(img) #入ってきたフレーム画像に対してfacemeshを行う
 
     #書き換えポイント
-    f = open(".//result//csv_result//" + str(video_name) + "_landmark.csv", "a") #追記モードでファイルを開く
+    f = open(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_landmark.csv", "a") #追記モードでファイルを開く
 
     r_value_list = [] #R成分値のリスト
     g_value_list = [] #G成分値のリスト
@@ -226,8 +226,7 @@ def face_landmark_facemesh(img, frame_count, video_name):
     time = frame_count
 
     #取得してきた値を書き出す
-    file_name = ".//result//csv_result//" + str(video_name) + ".csv"
-    f = open(file_name, "a") #追記モードでファイルを開く
+    f = open(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_landmark.csv", "a") #追記モードでファイルを開く
     f.write(str(R) + "," + str(G) + "," + str(B) + "," + str(rg) + "," + str(rb) + "," + str(gb) + "," + str(R_r) + "," + str(G_r) + "," + str(B_r) + "," + str(rg_r) + "," + str(rb_r) + "," + str(gb_r) + "," + str(R_l) + "," + str(G_l) + "," + str(B_l) + "," + str(rg_l) + "," + str(rb_l) + "," + str(gb_l) + "," + str(R_a) + "," + str(G_a) + "," + str(B_a) + "," + str(rg_a) + "," + str(rb_a) + "," + str(gb_a) + "," + str(time) + "\n")
     f.close()
 
@@ -237,7 +236,8 @@ def face_landmark_facemesh(img, frame_count, video_name):
 #---------------------------------
 def smooth_data():
     #書き換えポイント
-    df = pd.read_csv(".//result//csv_result//" + str(video_name) + ".csv", encoding="utf-8") #先に作成したデータファイルを開く 
+    df = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_landmark.csv", encoding="shift_jis") #先に作成したデータファイルを開く
+#    df = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_landmark.csv", encoding="utf-8") #先に作成したデータファイルを開く 
 
     #線形補間をするために値をfloat型に変換する(NAN値はError扱い)
     use_data_R = pd.to_numeric(df["R Value"], errors="coerce")
@@ -270,7 +270,7 @@ def smooth_data():
     smooth_data = smooth_data.rename(columns={"R Value":"Smotth R Value", "G Value":"Smooth G Value", "B Value":"Smooth B Value", "R-B Value":"Smooth R-B Value", "R-G Value":"Smooth R-G Value", "G-B Value":"Smooth G-B Value", "Both R Value":"Smooth Both R Value", "Both G Value":"Smooth Both G Value", "Both B Value":"Smooth Both B Value","Both R-B Value":"Smooth Both R-B Value", "Both R-G Value":"Smooth Both R-G Value", "Both G-B Value":"Smooth Both G-B Value", "nose-cheek R-B Value":"Smooth nose-cheek R-B Value", "nose-cheek G-B Value":"Smooth nose-cheek G-B Value", "nose-cheek R-G Value":"Smooth nose-cheek R-G Value"})
     #スムージングする(約5秒でのスムージング)
     smooth_data_2 = use_data_drop_nan.rolling(5).mean()
-    smooth_data_2 = smooth_data.rename(columns={"R Value":"Smotth R Value", "G Value":"Smooth G Value", "B Value":"Smooth B Value", "R-B Value":"Smooth R-B Value", "R-G Value":"Smooth R-G Value", "G-B Value":"Smooth G-B Value", "Both R Value":"Smooth Both R Value", "Both G Value":"Smooth Both G Value", "Both B Value":"Smooth Both B Value","Both R-B Value":"Smooth Both R-B Value", "Both R-G Value":"Smooth Both R-G Value", "Both G-B Value":"Smooth Both G-B Value", "nose-cheek R-B Value":"Smooth nose-cheek R-B Value", "nose-cheek G-B Value":"Smooth nose-cheek G-B Value", "nose-cheek R-G Value":"Smooth nose-cheek R-G Value"})
+    smooth_data_2 = smooth_data_2.rename(columns={"R Value":"Smotth R Value", "G Value":"Smooth G Value", "B Value":"Smooth B Value", "R-B Value":"Smooth R-B Value", "R-G Value":"Smooth R-G Value", "G-B Value":"Smooth G-B Value", "Both R Value":"Smooth Both R Value", "Both G Value":"Smooth Both G Value", "Both B Value":"Smooth Both B Value","Both R-B Value":"Smooth Both R-B Value", "Both R-G Value":"Smooth Both R-G Value", "Both G-B Value":"Smooth Both G-B Value", "nose-cheek R-B Value":"Smooth nose-cheek R-B Value", "nose-cheek G-B Value":"Smooth nose-cheek G-B Value", "nose-cheek R-G Value":"Smooth nose-cheek R-G Value"})
 
 
     #スムージングしたデータをデータフレームに落とし込む
@@ -278,8 +278,10 @@ def smooth_data():
     analysis_data_2 = pd.concat([use_data_drop_nan, smooth_data_2], axis=1)
 
     #csvファイルとして書き出しをする
-    analysis_data.to_csv(".//result//csv_result//" + str(video_name) + "_smooth_20sec.csv", encoding="utf-8")
-    analysis_data_2.to_csv(".//result//csv_result//" + str(video_name) + "_smooth_5sec.csv", encoding="utf-8")
+    # analysis_data.to_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_20sec.csv", encoding="utf-8")
+    # analysis_data_2.to_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_5sec.csv", encoding="utf-8")
+    analysis_data.to_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_20sec.csv", encoding="shift_jis")
+    analysis_data_2.to_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_5sec.csv", encoding="shift_jis")
 
 
 #---------------------
@@ -287,8 +289,10 @@ def smooth_data():
 #---------------------
 def make_graph():
 
-    analysis_data_20second = pd.read_csv(".//result//csv_result//" + str(video_name) + "_smooth_20sec.csv", encoding="utf-8")
-    analysis_data_5second = pd.read_csv(".//result//csv_result//" + str(video_name) + "_smooth_5sec.csv", encoding="utf-8")
+    # analysis_data_20second = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_20sec.csv", encoding="utf-8")
+    # analysis_data_5second = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_5sec.csv", encoding="utf-8")
+    analysis_data_20second = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_20sec.csv", encoding="shift_jis")
+    analysis_data_5second = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_5sec.csv", encoding="shift_jis")
 
     #----------------------------------------------
     #データのグラフ化を行う(20secでの平滑化(鼻(R-B)))
@@ -344,8 +348,11 @@ def make_graph():
     pyplot.grid(axis="y") #y軸の目盛り線
     pyplot.legend(prop={"family":"MS Gothic"}) #凡例
 
-    fig.savefig(".//result//figure_result//" + str(video_name) + "_20sec.png")
-    fig_2.savefig(".//result//figure_result//" + str(video_name) + "_5sec.png")
+    fig.savefig(".//result//figure_result//" + str(video_name) + "//20sec.png")
+    fig_2.savefig(".//result//figure_result//" + str(video_name) + "//5sec.png")
+    pyplot.close(fig)
+    pyplot.close(fig_2)
+
 
 #-------------
 #メイン関数
@@ -377,8 +384,8 @@ if __name__=="__main__":
             os.mkdir(figure_path)
 
             #csvファイルの作成
-            f = open(".//result//csv_result//" + str(video_name) + "_landmark.csv", "a") #新規作成モードでファイルを開く
-            f.write("R Value" + "," + "G Value" + "," + "B Value" +  "," + "R-G Value" + "," + "R-B Value" + "," + "G-B Value" + "," + "Right R Value" + "," + "Right G Value" + "," + "Right B Value" +  "," + "Right R-G Value" + "," + "Right R-B Value" + "," + "Right G-B Value" + "," + "Left R Value" + "," + "Left G Value" + "," + "Left B Value" +  "," + "Left R-G Value" + "," + "Left R-B Value" + "," + "Left G-B Value" + "," + "Both R value" + "," + "Both G Value" + "," + "Both B Value" +  "," + "Both R-G Value" + "," + "Both R-B Value" + "," + "Both G-B Value" + "," + "Time" + "\n") #ヘッダー作成
+            f = open(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_landmark.csv", "a") #新規作成モードでファイルを開く
+            f.write("R Value" + "," + "G Value" + "," + "B Value" +  "," + "R-G Value" + "," + "R-B Value" + "," + "G-B Value" + "," + "Right R Value" + "," + "Right G Value" + "," + "Right B Value" +  "," + "Right R-G Value" + "," + "Right R-B Value" + "," + "Right G-B Value" + "," + "Left R Value" + "," + "Left G Value" + "," + "Left B Value" +  "," + "Left R-G Value" + "," + "Left R-B Value" + "," + "Left G-B Value" + "," + "Both R Value" + "," + "Both G Value" + "," + "Both B Value" +  "," + "Both R-G Value" + "," + "Both R-B Value" + "," + "Both G-B Value" + "," + "Time" + "\n") #ヘッダー作成
             f.close()
 
             while True: #動画が終わるまで続ける
@@ -398,5 +405,5 @@ if __name__=="__main__":
             cap.release() #動画を終了する
             video_count += 1 #次の動画を見るためにカウンターを増やす
 
-    smooth_data() #平滑化したデータを作成する
-    make_graph() #時系列グラフの作成
+            smooth_data() #平滑化したデータを作成する
+            make_graph() #時系列グラフの作成
