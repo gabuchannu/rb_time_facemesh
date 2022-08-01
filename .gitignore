@@ -1,0 +1,6 @@
+#このファイルに入っているものはgitに入れない
+result/*
+data_movie/*
+
+__pycache__/
+.DS_Store
