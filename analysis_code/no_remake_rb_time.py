@@ -5,6 +5,7 @@ import pandas as pd
 from matplotlib import pyplot
 import face_mesh_matsumoto
 import os
+import gc
 
 #-------------------------------------
 #画像から顔のランドマーク検出を行う関数
@@ -13,9 +14,6 @@ def face_landmark_facemesh(img, frame_count, video_name):
 
     facemesh = face_mesh_matsumoto.Facemesh(0.7, 0.5) #facemeshを呼びだす
     results = facemesh.run(img) #入ってきたフレーム画像に対してfacemeshを行う
-
-    #書き換えポイント
-    f = open(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_landmark.csv", "a") #追記モードでファイルを開く
 
     r_value_list = [] #R成分値のリスト
     g_value_list = [] #G成分値のリスト
@@ -230,14 +228,17 @@ def face_landmark_facemesh(img, frame_count, video_name):
     f.write(str(R) + "," + str(G) + "," + str(B) + "," + str(rg) + "," + str(rb) + "," + str(gb) + "," + str(R_r) + "," + str(G_r) + "," + str(B_r) + "," + str(rg_r) + "," + str(rb_r) + "," + str(gb_r) + "," + str(R_l) + "," + str(G_l) + "," + str(B_l) + "," + str(rg_l) + "," + str(rb_l) + "," + str(gb_l) + "," + str(R_a) + "," + str(G_a) + "," + str(B_a) + "," + str(rg_a) + "," + str(rb_a) + "," + str(gb_a) + "," + str(time) + "\n")
     f.close()
 
+    del r_value_list, g_value_list, b_value_list, rb_value_list, rg_value_list, gb_value_list, R_r_value_list, G_r_value_list, B_r_value_list, rb_r_value_list, rg_r_value_list, gb_r_value_list, R_l_value_list, G_l_value_list, B_l_value_list, rb_l_value_list, rg_l_value_list, gb_l_value_list
+    gc.collect() #メモリ解放
+
 
 #---------------------------------
 #作り直したデータを平滑化する関数
 #---------------------------------
 def smooth_data():
     #書き換えポイント
-    df = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_landmark.csv", encoding="shift_jis") #先に作成したデータファイルを開く
-#    df = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_landmark.csv", encoding="utf-8") #先に作成したデータファイルを開く 
+    # df = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_landmark.csv", encoding="shift_jis") #先に作成したデータファイルを開く
+    df = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_landmark.csv", encoding="utf-8") #先に作成したデータファイルを開く 
 
     #線形補間をするために値をfloat型に変換する(NAN値はError扱い)
     use_data_R = pd.to_numeric(df["R Value"], errors="coerce")
@@ -278,10 +279,10 @@ def smooth_data():
     analysis_data_2 = pd.concat([use_data_drop_nan, smooth_data_2], axis=1)
 
     #csvファイルとして書き出しをする
-    # analysis_data.to_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_20sec.csv", encoding="utf-8")
-    # analysis_data_2.to_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_5sec.csv", encoding="utf-8")
-    analysis_data.to_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_20sec.csv", encoding="shift_jis")
-    analysis_data_2.to_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_5sec.csv", encoding="shift_jis")
+    analysis_data.to_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_20sec.csv", encoding="utf-8")
+    analysis_data_2.to_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_5sec.csv", encoding="utf-8")
+    # analysis_data.to_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_20sec.csv", encoding="shift_jis")
+    # analysis_data_2.to_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_5sec.csv", encoding="shift_jis")
 
 
 #---------------------
@@ -289,10 +290,10 @@ def smooth_data():
 #---------------------
 def make_graph():
 
-    # analysis_data_20second = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_20sec.csv", encoding="utf-8")
-    # analysis_data_5second = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_5sec.csv", encoding="utf-8")
-    analysis_data_20second = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_20sec.csv", encoding="shift_jis")
-    analysis_data_5second = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_5sec.csv", encoding="shift_jis")
+    analysis_data_20second = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_20sec.csv", encoding="utf-8")
+    analysis_data_5second = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_5sec.csv", encoding="utf-8")
+    #analysis_data_20second = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_20sec.csv", encoding="shift_jis")
+    #analysis_data_5second = pd.read_csv(".//result//csv_result//" + str(video_name) + "//" + str(video_name) + "_smooth_5sec.csv", encoding="shift_jis")
 
     #----------------------------------------------
     #データのグラフ化を行う(20secでの平滑化(鼻(R-B)))
